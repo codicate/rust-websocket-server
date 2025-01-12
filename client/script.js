@@ -1,35 +1,52 @@
-const socket = new WebSocket('ws://localhost:8080/ws');
+document.getElementById('join-button').onclick = function () {
+	const username = document.getElementById('username-input').value.trim();
+	if (username) {
+		// Hide the username input page
+		document.getElementById('username-container').style.display = 'none';
 
-const chatBox = document.getElementById('chat-box');
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
+		// Show the chat page
+		document.getElementById('chat-container').style.display = 'block';
 
-function addMessage(text, isSender = false) {
+		handle_websocket(username);
+	}
+};
+
+function handle_websocket(username) {
+	const socket = new WebSocket('ws://localhost:8080/ws');
+
+	const messageInput = document.getElementById('message-input');
+	const sendButton = document.getElementById('send-button');
+
+	sendButton.onclick = function () {
+		const message = messageInput.value.trim();
+		if (message) {
+			addMessage('You', message);
+			socket.send(JSON.stringify({ message }));
+			messageInput.value = '';
+		}
+	};
+
+	socket.onopen = function () {
+		socket.send(JSON.stringify({ username }));
+		addMessage('System', 'Connected to the chat server.');
+	};
+
+	socket.onclose = function () {
+		addMessage('System', 'Disconnected from the chat server.');
+	};
+
+	socket.onmessage = function (event) {
+		let data = JSON.parse(event.data);
+		addMessage(data.username, data.message);
+	};
+}
+
+function addMessage(username, message) {
 	const messageElement = document.createElement('div');
-	messageElement.className = `message ${isSender ? 'sender' : ''}`;
-	messageElement.textContent = text;
+	messageElement.className = `message ${username === 'You' ? 'sender' : ''}`;
+	messageElement.textContent = `${username}: ${message}`;
+
+	const chatBox = document.getElementById('chat-box');
 	chatBox.appendChild(messageElement);
 	chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-sendButton.addEventListener('click', () => {
-	const message = messageInput.value.trim();
-	if (message) {
-		addMessage(`You: ${message}`, true);
-		socket.send(message); // Send message to WebSocket
-		messageInput.value = '';
-	}
-});
-
-socket.addEventListener('message', (event) => {
-	addMessage(`Someone: ${event.data}`);
-});
-
-socket.addEventListener('open', () => {
-	console.log('Connected to chat server');
-	addMessage('Connected to the chat server.');
-});
-
-socket.addEventListener('close', () => {
-	addMessage('Disconnected from the chat server.');
-});

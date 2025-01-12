@@ -3,11 +3,27 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Rust Websocket Example</title>
+		<title>Rust WebSocket Example</title>
 		<link rel="stylesheet" href="styles.css" />
 	</head>
 	<body>
-		<div id="chat-container">
+		<!-- Username Input Page -->
+		<div id="username-container" class="container">
+			<h1>Enter a username</h1>
+			<div id="chat-input">
+				<input
+					type="text"
+					id="username-input"
+					placeholder="Enter your username..."
+					autocomplete="off"
+					required
+				/>
+				<button id="join-button">Join</button>
+			</div>
+		</div>
+
+		<!-- Chat Page (Initially Hidden) -->
+		<div id="chat-container" class="container" style="display: none">
 			<h1>Group Chat</h1>
 			<div id="chat-box"></div>
 			<div id="chat-input">
@@ -20,6 +36,7 @@
 				<button id="send-button">Send</button>
 			</div>
 		</div>
+
 		<script src="script.js"></script>
 	</body>
 </html>

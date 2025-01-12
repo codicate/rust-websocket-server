@@ -2,6 +2,7 @@ mod rest;
 mod ws;
 
 use rest::Request;
+use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
@@ -9,8 +10,19 @@ use std::time::Duration;
 use ws::{encode_message, ws_handshake, Frame, FrameKind};
 
 struct Client {
+    username: String,
     address: String,
     stream: TcpStream,
+}
+
+impl Client {
+    fn new(address: String, stream: TcpStream) -> Self {
+        Client {
+            username: String::new(),
+            address,
+            stream,
+        }
+    }
 }
 
 fn main() {
@@ -47,7 +59,9 @@ fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
 
         let address = stream.peer_addr().unwrap().to_string();
         println!("New WebSocket connection: {}", address);
-        clients.push(Client { address, stream });
+
+        let client = Client::new(address, stream);
+        clients.push(client);
     }
 }
 
@@ -67,9 +81,17 @@ fn handle_clients(clients: &mut Vec<Client>) {
             continue;
         }
 
-        let message = String::from_utf8(frame.payload).unwrap();
-        println!("Received message from {}: {}", client.address, message);
-        messages.insert(client.address.clone(), message);
+        let data: Value = serde_json::from_slice(&frame.payload).unwrap();
+        println!("Received data from {}: {}", client.address, data);
+
+        if let Some(username) = data.get("username") {
+            client.username = username.as_str().unwrap().to_string();
+        }
+
+        if let Some(message) = data.get("message") {
+            let data = json!({ "username": client.username, "message": message });
+            messages.insert(client.address.clone(), data.to_string());
+        }
     }
 
     for &index in disconnected_clients.iter().rev() {
@@ -82,7 +104,6 @@ fn handle_clients(clients: &mut Vec<Client>) {
             if other.address == address {
                 continue;
             }
-
             other.stream.write_all(&encoded_message).unwrap();
         }
     }
