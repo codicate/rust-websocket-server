@@ -20,7 +20,6 @@ function handle_websocket(username) {
 	sendButton.onclick = function () {
 		const message = messageInput.value.trim();
 		if (message) {
-			addMessage('You', message);
 			socket.send(JSON.stringify({ message }));
 			messageInput.value = '';
 		}
@@ -28,7 +27,6 @@ function handle_websocket(username) {
 
 	socket.onopen = function () {
 		socket.send(JSON.stringify({ username }));
-		addMessage('System', 'Connected to the chat server.');
 	};
 
 	socket.onclose = function () {
@@ -37,13 +35,16 @@ function handle_websocket(username) {
 
 	socket.onmessage = function (event) {
 		let data = JSON.parse(event.data);
+		if (data.username === username) {
+			data.username = 'You';
+		}
 		addMessage(data.username, data.message);
 	};
 }
 
 function addMessage(username, message) {
 	const messageElement = document.createElement('div');
-	messageElement.className = `message ${username === 'You' ? 'sender' : ''}`;
+	messageElement.className = `message ${username}`;
 	messageElement.textContent = `${username}: ${message}`;
 
 	const chatBox = document.getElementById('chat-box');

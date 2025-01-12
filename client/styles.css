@@ -47,8 +47,12 @@ h1 {
 	background: #e6f7ff;
 }
 
-.message.sender {
+.message.You {
 	background: #d4edda;
+}
+
+.message.System {
+	background: #f8d7da;
 }
 
 /* Input styles */

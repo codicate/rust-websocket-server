@@ -3,7 +3,6 @@ mod ws;
 
 use rest::Request;
 use serde_json::{json, Value};
-use std::collections::HashMap;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
@@ -67,7 +66,7 @@ fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
 
 fn handle_clients(clients: &mut Vec<Client>) {
     let mut disconnected_clients = vec![];
-    let mut messages: HashMap<String, String> = HashMap::new();
+    let mut messages = vec![];
 
     for (index, client) in clients.iter_mut().enumerate() {
         let Ok(frame) = Frame::new(&client.stream) else {
@@ -78,6 +77,11 @@ fn handle_clients(clients: &mut Vec<Client>) {
             println!("Closing WebSocket connection: {}", client.address);
             client.stream.shutdown(std::net::Shutdown::Both).unwrap();
             disconnected_clients.push(index);
+            add_message(
+                &mut messages,
+                "System".to_string(),
+                format!("{} left the chat", client.username),
+            );
             continue;
         }
 
@@ -86,11 +90,19 @@ fn handle_clients(clients: &mut Vec<Client>) {
 
         if let Some(username) = data.get("username") {
             client.username = username.as_str().unwrap().to_string();
+            add_message(
+                &mut messages,
+                "System".to_string(),
+                format!("{} joined the chat", client.username),
+            );
         }
 
         if let Some(message) = data.get("message") {
-            let data = json!({ "username": client.username, "message": message });
-            messages.insert(client.address.clone(), data.to_string());
+            add_message(
+                &mut messages,
+                client.username.clone(),
+                message.as_str().unwrap().to_string(),
+            );
         }
     }
 
@@ -98,13 +110,15 @@ fn handle_clients(clients: &mut Vec<Client>) {
         clients.remove(index);
     }
 
-    for (address, message) in messages {
+    for message in messages {
         let encoded_message = encode_message(message);
-        for other in clients.iter_mut() {
-            if other.address == address {
-                continue;
-            }
-            other.stream.write_all(&encoded_message).unwrap();
+        for client in clients.iter_mut() {
+            client.stream.write_all(&encoded_message).unwrap();
         }
     }
+}
+
+fn add_message(messages: &mut Vec<String>, username: String, message: String) {
+    let data = json!({ "username": username, "message": message });
+    messages.push(data.to_string());
 }
