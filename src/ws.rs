@@ -111,7 +111,7 @@ pub fn ws_handshake(request: Request) -> Response {
     response
 }
 
-pub fn encode_message(message: &str) -> Vec<u8> {
+pub fn encode_message(message: String) -> Vec<u8> {
     let mut frame = vec![];
     let length = message.len();
     frame.push(0x81); // Text frame opcode

@@ -2,6 +2,7 @@ mod rest;
 mod ws;
 
 use rest::Request;
+use std::collections::HashMap;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
@@ -51,7 +52,10 @@ fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
 }
 
 fn handle_clients(clients: &mut Vec<Client>) {
-    for client in clients.iter_mut() {
+    let mut disconnected_clients = vec![];
+    let mut messages: HashMap<String, String> = HashMap::new();
+
+    for (index, client) in clients.iter_mut().enumerate() {
         let Ok(frame) = Frame::new(&client.stream) else {
             continue;
         };
@@ -59,14 +63,27 @@ fn handle_clients(clients: &mut Vec<Client>) {
         if frame.kind == FrameKind::Close {
             println!("Closing WebSocket connection: {}", client.address);
             client.stream.shutdown(std::net::Shutdown::Both).unwrap();
-            return;
+            disconnected_clients.push(index);
+            continue;
         }
 
         let message = String::from_utf8(frame.payload).unwrap();
         println!("Received message from {}: {}", client.address, message);
+        messages.insert(client.address.clone(), message);
+    }
 
-        let response = "Hi, how can I help you?";
-        let response_bytes = encode_message(response);
-        client.stream.write_all(&response_bytes).unwrap();
+    for &index in disconnected_clients.iter().rev() {
+        clients.remove(index);
+    }
+
+    for (address, message) in messages {
+        let encoded_message = encode_message(message);
+        for other in clients.iter_mut() {
+            if other.address == address {
+                continue;
+            }
+
+            other.stream.write_all(&encoded_message).unwrap();
+        }
     }
 }
