@@ -19,10 +19,13 @@ fn main() {
 
     loop {
         match listener.accept() {
-            Err(_) => {} // No new connection, continue the loop
             Ok((stream, _)) => {
                 stream.set_nonblocking(true).unwrap();
                 handle_connection(stream, &mut clients);
+            }
+            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
+            Err(e) => {
+                eprintln!("Error accepting connection: {}", e);
             }
         }
 
@@ -31,10 +34,7 @@ fn main() {
 }
 
 fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
-    let Ok(request) = Request::new(&stream) else {
-        println!("Failed to read request");
-        return;
-    };
+    let request = Request::new(&stream);
     println!("Received request: {} {}", request.method, request.path);
 
     if request.path == "/ws" {

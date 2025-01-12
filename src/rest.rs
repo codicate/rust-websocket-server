@@ -8,7 +8,7 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn new(mut stream: &TcpStream) -> std::io::Result<Self> {
+    pub fn new(mut stream: &TcpStream) -> Self {
         let mut buffer = [0; 1024];
         stream.read(&mut buffer).unwrap();
 
@@ -29,11 +29,11 @@ impl Request {
             }
         }
 
-        Ok(Request {
+        Request {
             method,
             path,
             headers,
-        })
+        }
     }
 }
 
