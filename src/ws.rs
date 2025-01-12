@@ -25,8 +25,9 @@ pub struct Frame {
 impl Frame {
     // Data frame reference: https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
     pub fn new(mut stream: &TcpStream) -> std::io::Result<Frame> {
+        std::thread::sleep(std::time::Duration::from_micros(1)); // Wait for data to be available
         let mut buffer = [0u8; 2];
-        stream.read_exact(&mut buffer[..1]).unwrap(); // Read the first byte
+        stream.read_exact(&mut buffer[..1])?; // Read the first byte
 
         let is_fin = buffer[0] & 128 != 0; // First bit
         let opcode = buffer[0] & 15; // Last 4 bits
@@ -107,7 +108,6 @@ pub fn ws_handshake(request: Request) -> Response {
     response.add_header("Connection", "Upgrade");
     response.add_header("Sec-WebSocket-Accept", &accept);
 
-    println!("Handshake completed. WebSocket connection established!");
     response
 }
 

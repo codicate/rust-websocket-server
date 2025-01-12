@@ -8,8 +8,9 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn new(mut stream: &TcpStream) -> Self {
-        let mut buffer = [0; 1024];
+    pub fn new(mut stream: &TcpStream) -> std::io::Result<Self> {
+        std::thread::sleep(std::time::Duration::from_micros(1)); // Wait for data to be available
+        let mut buffer = [0; 1024]; // 1KB buffer
         stream.read(&mut buffer).unwrap();
 
         let request = String::from_utf8_lossy(&buffer).to_owned();
@@ -29,11 +30,11 @@ impl Request {
             }
         }
 
-        Request {
+        Ok(Request {
             method,
             path,
             headers,
-        }
+        })
     }
 }
 

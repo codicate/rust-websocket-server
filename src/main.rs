@@ -4,6 +4,7 @@ mod ws;
 use rest::Request;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
+use std::time::Duration;
 use ws::{encode_message, ws_handshake, Frame, FrameKind};
 
 struct Client {
@@ -29,13 +30,15 @@ fn main() {
             }
         }
 
-        // handle_clients(&mut clients);
+        handle_clients(&mut clients);
+        std::thread::sleep(Duration::from_millis(10));
     }
 }
 
 fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
-    let request = Request::new(&stream);
-    println!("Received request: {} {}", request.method, request.path);
+    let Ok(request) = Request::new(&stream) else {
+        return;
+    };
 
     if request.path == "/ws" {
         let response = ws_handshake(request);
@@ -50,7 +53,6 @@ fn handle_connection(mut stream: TcpStream, clients: &mut Vec<Client>) {
 fn handle_clients(clients: &mut Vec<Client>) {
     for client in clients.iter_mut() {
         let Ok(frame) = Frame::new(&client.stream) else {
-            println!("Failed to read frame");
             continue;
         };
 
