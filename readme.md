@@ -1,4 +1,8 @@
-## Building a Simple WebSocket Server Using Rust with No Dependencies
+## Building a Group Chat WebSocket Server with Minimal Dependencies
+
+### Demo
+
+https://github.com/user-attachments/assets/51f9624b-5eba-451e-9a5f-17c2028f9508
 
 ### Motivation
 
