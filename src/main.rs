@@ -1,7 +1,7 @@
-mod rest;
+mod http;
 mod ws;
 
-use rest::Request;
+use http::Request;
 use serde_json::{json, Value};
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};

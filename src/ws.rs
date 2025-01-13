@@ -1,8 +1,7 @@
-use crate::rest::Request;
-use crate::rest::Response;
+use crate::http::Request;
+use crate::http::Response;
 use base64::prelude::*;
 use sha1::{Digest, Sha1};
-use std::collections::HashMap;
 use std::io::Read;
 use std::net::TcpStream;
 
@@ -95,19 +94,13 @@ pub fn ws_handshake(request: Request) -> Response {
 
     let mut hasher = Sha1::new();
     hasher.update(key.as_bytes());
-    hasher.update(b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+    hasher.update(b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"); // Magic string
     let accept = BASE64_STANDARD.encode(hasher.finalize());
-
-    let mut headers = HashMap::new();
-    headers.insert("Upgrade", "websocket");
-    headers.insert("Connection", "Upgrade");
-    headers.insert("Sec-WebSocket-Accept", &accept);
 
     let mut response = Response::new(101, "Switching Protocols");
     response.add_header("Upgrade", "websocket");
     response.add_header("Connection", "Upgrade");
     response.add_header("Sec-WebSocket-Accept", &accept);
-
     response
 }
 

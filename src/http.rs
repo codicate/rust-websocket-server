@@ -16,14 +16,14 @@ impl Request {
         let request = String::from_utf8_lossy(&buffer).to_owned();
         let mut lines = request.lines();
 
-        let mut info = lines.next().unwrap().split_whitespace();
-        let method = info.next().unwrap().to_string();
-        let path = info.next().unwrap().to_string();
+        let mut request_line = lines.next().unwrap().split_whitespace();
+        let method = request_line.next().unwrap().to_string();
+        let path = request_line.next().unwrap().to_string();
 
         let mut headers = HashMap::new();
         for line in lines {
             if line.trim().is_empty() {
-                break; // End of headers
+                break; // Blank line, end of headers
             }
             if let Some((key, value)) = line.split_once(":") {
                 headers.insert(key.trim().to_string(), value.trim().to_string());
