@@ -1,22 +1,23 @@
 /* General styles */
 body {
-	font-family: Arial, sans-serif;
-	background-color: #f9f9f9;
+	font-family: 'Inter', Arial, sans-serif;
+	background-color: #0f0f0f; /* Darker background */
 	margin: 0;
 	padding: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
+	color: #d4d4d4; /* Muted light gray for text */
 }
 
 /* Chat container styles */
 .container {
 	width: 400px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	background: #fff;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 1px solid #2a2a2a; /* Subtle dark gray border */
+	border-radius: 12px;
+	background: #161616; /* Slightly lighter black for contrast */
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Slightly stronger shadow */
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -24,61 +25,102 @@ body {
 
 h1 {
 	margin: 0;
-	padding: 10px;
-	background: #0078d7;
-	color: white;
+	padding: 15px;
+	background: #2e2e2e; /* Muted dark gray */
+	color: #e0e0e0; /* Softer white */
 	text-align: center;
-	font-size: 1.2em;
+	font-size: 1em;
+	font-weight: 600;
+	border-bottom: 1px solid #3a3a3a; /* Slight contrast divider */
 }
 
 /* Chat box styles */
 #chat-box {
 	flex: 1;
-	padding: 10px;
+	padding: 15px;
 	overflow-y: auto;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
+	background-color: #121212; /* Darker black for the chat background */
+	border-top: 1px solid #2a2a2a;
+	border-bottom: 1px solid #2a2a2a;
+	scrollbar-width: thin;
+	scrollbar-color: #3a3a3a transparent;
+}
+
+#chat-box::-webkit-scrollbar {
+	width: 8px;
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+	background-color: #3a3a3a; /* Muted gray scrollbar */
+	border-radius: 4px;
 }
 
 .message {
-	margin: 5px 0;
-	padding: 8px;
-	border-radius: 5px;
-	background: #e6f7ff;
+	margin: 8px 0;
+	padding: 10px 14px;
+	border-radius: 8px;
+	font-size: 0.9em;
+	line-height: 1.4em;
+
+	background: #1976d2; /* Less saturated blue for other user's messages */
+	color: #dbeff8; /* Softer white-blue */
 }
 
 .message.You {
-	background: #d4edda;
+	background: #3e8c45; /* Less saturated green for user messages */
+	color: #e5f2ec; /* Softer white */
 }
 
 .message.System {
-	background: #f8d7da;
+	background: #b12b2b; /* Less bright red for system messages */
+	color: #f9f9f9; /* Light gray-white */
 }
 
 /* Input styles */
 #chat-input {
 	display: flex;
-	padding: 10px;
-	gap: 5px;
+	padding: 12px;
+	gap: 8px;
+	background-color: #161616; /* Match container background */
 }
 
 input {
 	flex: 1;
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
+	padding: 10px 14px;
+	border: 1px solid #3a3a3a;
+	border-radius: 6px;
 	font-size: 1em;
+	color: #e6e6e6;
+	background-color: #121212; /* Slightly darker for contrast */
+	outline: none;
+}
+
+input::placeholder {
+	color: #5a5a5a; /* Muted gray */
 }
 
 button {
-	padding: 8px 12px;
+	padding: 10px 16px;
 	border: none;
-	border-radius: 4px;
-	background-color: #0078d7;
-	color: white;
+	border-radius: 6px;
+	background-color: #3a3a3a; /* Muted gray */
+	color: #e6e6e6;
+	font-size: 0.95em;
+	font-weight: 500;
 	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-	background-color: #005bb5;
+	background-color: #4a4a4a; /* Slightly lighter muted gray */
+	transform: scale(1.05);
+}
+
+button:active {
+	background-color: #2a2a2a; /* Darker muted gray */
+}
+
+input::placeholder {
+	font-size: 0.9em;
+	font-style: italic;
 }
