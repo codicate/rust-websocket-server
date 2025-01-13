@@ -7,37 +7,47 @@
 		<link rel="stylesheet" href="styles.css" />
 	</head>
 	<body>
+		<!-- Username Input Page -->
 		<div id="username-container" class="container">
 			<h1>Enter a username</h1>
-			<div id="chat-input">
-				<input
-					type="text"
-					id="username-input"
-					placeholder="👤 Enter your username..."
-					autocomplete="off"
-					required
-				/>
-				<button id="join-button">
-					<span>Join</span>
-				</button>
-			</div>
+			<form id="username-form">
+				<div id="chat-input">
+					<input
+						type="text"
+						id="username-input"
+						placeholder="👤 Enter your username..."
+						autocomplete="off"
+						required
+						autofocus
+					/>
+					<button id="join-button" type="submit">
+						<span>Join</span>
+					</button>
+				</div>
+			</form>
 		</div>
 
+		<!-- Chat Page (Initially Hidden) -->
 		<div id="chat-container" class="container" style="display: none">
 			<h1>Group Chat</h1>
 			<div id="chat-box" class="chat-box-placeholder"></div>
-			<div id="chat-input">
-				<input
-					type="text"
-					id="message-input"
-					placeholder="💬 Type a message..."
-					autocomplete="off"
-				/>
-				<button id="send-button">
-					<span>Send</span>
-				</button>
-			</div>
+			<form id="message-form">
+				<div id="chat-input">
+					<input
+						type="text"
+						id="message-input"
+						placeholder="💬 Type a message..."
+						autocomplete="off"
+						required
+						autofocus
+					/>
+					<button id="send-button" type="submit">
+						<span>Send</span>
+					</button>
+				</div>
+			</form>
 		</div>
+
 		<script src="script.js"></script>
 	</body>
 </html>

@@ -1,11 +1,13 @@
-document.getElementById('join-button').onclick = function () {
+document.getElementById('join-button').onclick = function (event) {
+	event.preventDefault();
+
 	const username = document.getElementById('username-input').value.trim();
 	if (username) {
 		// Hide the username input page
 		document.getElementById('username-container').style.display = 'none';
 
 		// Show the chat page
-		document.getElementById('chat-container').style.display = 'block';
+		document.getElementById('chat-container').style.display = 'flex';
 
 		handle_websocket(username);
 	}
@@ -15,9 +17,12 @@ function handle_websocket(username) {
 	const socket = new WebSocket('ws://localhost:8080/ws');
 
 	const messageInput = document.getElementById('message-input');
-	const sendButton = document.getElementById('send-button');
+	messageInput.focus();
 
-	sendButton.onclick = function () {
+	const sendButton = document.getElementById('send-button');
+	sendButton.onclick = function (event) {
+		event.preventDefault();
+
 		const message = messageInput.value.trim();
 		if (message) {
 			socket.send(JSON.stringify({ message }));

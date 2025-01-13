@@ -9,6 +9,7 @@ body {
 	align-items: center;
 	height: 100vh;
 	color: #d4d4d4; /* Muted light gray for text */
+	overflow: hidden; /* Prevent the body from scrolling */
 }
 
 /* Chat container styles */
@@ -34,6 +35,11 @@ h1 {
 	border-bottom: 1px solid #3a3a3a; /* Slight contrast divider */
 }
 
+#chat-container {
+	height: 90vh; /* Make it responsive, filling most of the viewport */
+	max-height: 90vh;
+}
+
 /* Chat box styles */
 #chat-box {
 	flex: 1;
@@ -44,6 +50,8 @@ h1 {
 	border-bottom: 1px solid #2a2a2a;
 	scrollbar-width: thin;
 	scrollbar-color: #3a3a3a transparent;
+	overflow-y: auto; /* Enable vertical scrolling */
+	padding: 15px;
 }
 
 #chat-box::-webkit-scrollbar {
