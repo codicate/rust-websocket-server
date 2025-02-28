@@ -28,6 +28,8 @@ I learned about alternatives for handling this issue, such as using multiple thr
 
 To achieve this, I set the TCP listener and streams to nonblocking mode and stored all active WebSocket connections in a list. On each iteration of the loop, the server first listens for and handles new HTTP requests. It then loops over the list of open `TcpStream` objects to check for incoming messages. All incoming messages are collected into an array. Finally, the server loops over the list again to broadcast these messages to all connected clients. This approach successfully created a group chat system while still allowing new users to join.
 
+A nasty bug I encountered was that when an incoming `TcpStream` was detected, calling `stream.read` still returned Null. I'm still not exactly sure why this happened. I suspected that my listener for incoming messages was busy looping, causing each iteration to run faster than the time required to complete the I/O operation. To test this, I introduced artificial delays using `thread::sleep`, and it fixed the issue. I'd love to hear any insights you might have about this.
+
 ### Handling Metadata
 
 I wrote a simple web interface for the group chat demo and noticed a new limitation: from the client's perspective, it had no idea which client a broadcasted message belonged to. Only the server maintained this information. To address this, I decided to encode every message as a JSON string, allowing metadata to be sent along with the message. I also asked each client to input their username, which the server stored to identify the sender of each message. Additionally, the server now broadcasts a notification whenever a user joins or leaves, making the chat experience more transparent and interactive.
